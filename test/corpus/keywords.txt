@@ -1,0 +1,177 @@
+==================
+Handler binding
+==================
+
+handle h = Effect with
+  fun perform()(k) = k(1)
+
+---
+
+(source_file
+  (handle_binding
+    (identifier)
+    (identifier)
+    (block
+      (fun_definition
+        (application
+          (application
+            (identifier)
+            (arguments))
+          (arguments
+            (identifier)))
+        (application
+          (identifier)
+          (arguments
+            (integer_literal)))))))
+
+==================
+Handler binding with an in clause
+==================
+
+handle h = Effect with
+  fun perform()(k) = k(1)
+in
+  h.perform()
+
+---
+
+(source_file
+  (handle_in_binding
+    (identifier)
+    (identifier)
+    (block
+      (fun_definition
+        (application
+          (application
+            (identifier)
+            (arguments))
+          (arguments
+            (identifier)))
+        (application
+          (identifier)
+          (arguments
+            (integer_literal)))))
+    (block
+      (application
+        (selection
+          (identifier)
+          (identifier))
+        (arguments)))))
+
+==================
+Region
+==================
+
+region r in
+  r.ref 1
+
+---
+
+(source_file
+  (region_expression
+    (identifier)
+    (block
+      (selection
+        (identifier)
+        (identifier))
+      (integer_literal))))
+
+==================
+Try and finally
+==================
+
+try
+  risky()
+finally print("done")
+
+---
+
+(source_file
+  (try_expression
+    (block
+      (application
+        (identifier)
+        (arguments)))
+    (application
+      (identifier)
+      (arguments
+        (string_literal)))))
+
+==================
+Outer and assert
+==================
+
+outer
+outer o
+assert x else 1
+
+---
+
+(source_file
+  (outer_expression)
+  (outer_expression
+    (identifier))
+  (assert_expression
+    (identifier)
+    (integer_literal)))
+
+==================
+New with a refinement body
+==================
+
+new with
+  fun test = 1
+
+let c = new Cls(1) with
+  fun extra = 2
+
+---
+
+(source_file
+  (new_expression
+    (block
+      (fun_definition
+        (identifier)
+        (integer_literal))))
+  (let_binding
+    (identifier)
+    (infix_application
+      (application
+        (new_expression
+          (identifier))
+        (arguments
+          (integer_literal)))
+      (block
+        (fun_definition
+          (identifier)
+          (integer_literal))))))
+
+==================
+Modifier keywords are also usable as names
+==================
+
+data class Foo(x)
+class Bind(name: Str, data: Data, tail: Context)
+
+---
+
+(source_file
+  (class_definition
+    (modifier)
+    (application
+      (identifier)
+      (arguments
+        (identifier))))
+  (class_definition
+    (application
+      (identifier)
+      (arguments
+        (infix_application
+          (identifier)
+          (identifier))
+        (infix_application
+          (identifier)
+          (identifier))
+        (infix_application
+          (identifier)
+          (identifier))))))

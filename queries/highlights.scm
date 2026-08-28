@@ -69,6 +69,15 @@
 ] @keyword.import
 
 [
+  "handle"
+  "region"
+  "try"
+  "finally"
+  "outer"
+  "assert"
+] @keyword
+
+[
   "and"
   "or"
   "not"
@@ -84,10 +93,14 @@
 
 (modifier) @keyword.modifier
 
+(annotation_name) @attribute
+(escaped_identifier) @variable
+
 ; ---------------------------------------------------------------- operators
 
 (operator) @operator
 (operator_identifier) @operator
+(quoted_operator) @operator
 
 [
   "="
@@ -99,6 +112,8 @@
   "#"
   "..."
   ".."
+  "`"
+  "`("
 ] @operator
 
 [
@@ -154,6 +169,16 @@
 
 (pattern_definition head: (identifier) @type)
 (pattern_definition head: (type_arguments function: (identifier) @type))
+
+(handle_binding name: (identifier) @variable class: (identifier) @type)
+(handle_in_binding name: (identifier) @variable class: (identifier) @type)
+(region_expression name: (identifier) @variable)
+(outer_expression name: (identifier) @variable)
+
+(pun name: (identifier) @variable.member)
+(member_projection member: (identifier) @variable.member)
+(leading_selection field: (identifier) @variable.member)
+(quoted_binding name: (identifier) @variable)
 
 (open_statement module: (identifier) @module)
 (import_statement path: (string_literal) @string.special.path)

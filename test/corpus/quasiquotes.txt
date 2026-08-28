@@ -1,0 +1,107 @@
+==================
+Quoted atoms
+==================
+
+`42
+`x
+`"abc"
+`true
+
+---
+
+(source_file
+  (quoted
+    (integer_literal))
+  (quoted
+    (identifier))
+  (quoted
+    (string_literal))
+  (quoted
+    (boolean_literal)))
+
+==================
+Quoted operators and application
+==================
+
+`1 `+ `1
+f`(x)
+`id`(`42)
+
+---
+
+(source_file
+  (quoted_infix
+    (quoted
+      (integer_literal))
+    (quoted_operator)
+    (quoted
+      (integer_literal)))
+  (quoted_application
+    (identifier)
+    (quoted_arguments
+      (identifier)))
+  (quoted_application
+    (quoted
+      (identifier))
+    (quoted_arguments
+      (quoted
+        (integer_literal)))))
+
+==================
+Quoted lambda
+==================
+
+(x, y) `=> x `+ y
+
+---
+
+(source_file
+  (quoted_infix
+    (parenthesized_expression
+      (identifier)
+      (identifier))
+    (quoted_operator)
+    (quoted_infix
+      (identifier)
+      (quoted_operator)
+      (identifier))))
+
+==================
+Quoted let
+==================
+
+`let x = `42 `in run(x)
+
+---
+
+(source_file
+  (quoted_let
+    (quoted_bindings
+      (quoted_binding
+        (identifier)
+        (quoted
+          (integer_literal))))
+    (application
+      (identifier)
+      (arguments
+        (identifier)))))
+
+==================
+Quoted if
+==================
+
+`if x `== `0.0 then `1.0 else x
+
+---
+
+(source_file
+  (quoted_if
+    (infix_application
+      (quoted_infix
+        (identifier)
+        (quoted_operator)
+        (quoted
+          (decimal_literal)))
+      (quoted
+        (decimal_literal)))
+    (identifier)))

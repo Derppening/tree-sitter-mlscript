@@ -3,6 +3,8 @@ Operator precedence
 ==================
 
 a + b * c
+a * b + c
+x == 0 then 1
 
 ---
 
@@ -13,7 +15,20 @@ a + b * c
     (infix_application
       (identifier)
       (operator)
-      (identifier))))
+      (identifier)))
+  (infix_application
+    (infix_application
+      (identifier)
+      (operator)
+      (identifier))
+    (operator)
+    (identifier))
+  (infix_application
+    (infix_application
+      (identifier)
+      (operator)
+      (integer_literal))
+    (integer_literal)))
 
 ==================
 Selection and application
@@ -136,12 +151,12 @@ val x =
     (identifier)
     (block
       (infix_application
-        (string_literal)
-        (operator)
         (infix_application
-          (identifier)
+          (string_literal)
           (operator)
-          (identifier))))))
+          (identifier))
+        (operator)
+        (identifier)))))
 
 ==================
 Literals
@@ -163,3 +178,125 @@ Literals
     (boolean_literal)
     (unit_literal)
     (unit_literal)))
+
+==================
+An operator is an ordinary expression
+==================
+
+fun f() = ???
+folded of 1, *
+new mut ::(1, Nil)
+
+---
+
+(source_file
+  (fun_definition
+    (application
+      (identifier)
+      (arguments))
+    (operator))
+  (of_application
+    (identifier)
+    (of_arguments
+      (integer_literal)
+      (operator)))
+  (application
+    (new_expression
+      (modified_expression
+        (modifier)
+        (operator)))
+    (arguments
+      (integer_literal)
+      (identifier))))
+
+==================
+Annotations
+==================
+
+@tailrec
+fun f() = 1
+
+@annotations.compile @affine(1) val x = 2
+
+---
+
+(source_file
+  (annotated
+    (annotation
+      (annotation_name))
+    (fun_definition
+      (application
+        (identifier)
+        (arguments))
+      (integer_literal)))
+  (annotated
+    (annotation
+      (annotation_name))
+    (annotated
+      (annotation
+        (annotation_name)
+        (arguments
+          (integer_literal)))
+      (val_definition
+        (identifier)
+        (integer_literal)))))
+
+==================
+Puns, escaped names and projections
+==================
+
+f(:x, =y)
+val a = id"class"
+let z = .a
+val m = Cls::mem
+
+---
+
+(source_file
+  (application
+    (identifier)
+    (arguments
+      (pun
+        (identifier))
+      (pun
+        (identifier))))
+  (val_definition
+    (identifier)
+    (escaped_identifier))
+  (let_binding
+    (identifier)
+    (leading_selection
+      (identifier)))
+  (val_definition
+    (identifier)
+    (member_projection
+      (identifier)
+      (operator)
+      (identifier))))
+
+==================
+Arguments introduced by of
+==================
+
+tuple of 1,
+  2
+
+print of
+  1,
+  2
+
+---
+
+(source_file
+  (of_application
+    (identifier)
+    (of_arguments
+      (integer_literal)
+      (block
+        (integer_literal))))
+  (of_application
+    (identifier)
+    (of_arguments
+      (block
+        (integer_literal)
+        (integer_literal)))))

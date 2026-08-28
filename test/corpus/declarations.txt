@@ -69,7 +69,7 @@ data class (::) Cons[A](head: A, tail: Stack[A])
       (type_arguments
         (juxtaposition
           (parenthesized_expression
-            (operator_identifier))
+            (operator))
           (identifier))
         (identifier))
       (arguments
