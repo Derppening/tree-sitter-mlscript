@@ -1,0 +1,174 @@
+==================
+Function definition
+==================
+
+fun isDefined(x) = true
+
+---
+
+(source_file
+  (fun_definition
+    (application
+      (identifier)
+      (arguments
+        (identifier)))
+    (boolean_literal)))
+
+==================
+Function with indented body
+==================
+
+fun f(x) =
+  let y = x
+  y
+
+---
+
+(source_file
+  (fun_definition
+    (application
+      (identifier)
+      (arguments
+        (identifier)))
+    (block
+      (let_binding
+        (identifier)
+        (identifier))
+      (identifier))))
+
+==================
+Data class with type parameters
+==================
+
+data class Some[T](value)
+
+---
+
+(source_file
+  (class_definition
+    (modifier)
+    (application
+      (type_arguments
+        (identifier)
+        (identifier))
+      (arguments
+        (identifier)))))
+
+==================
+Class with operator name
+==================
+
+data class (::) Cons[A](head: A, tail: Stack[A])
+
+---
+
+(source_file
+  (class_definition
+    (modifier)
+    (application
+      (type_arguments
+        (juxtaposition
+          (parenthesized_expression
+            (operator_identifier))
+          (identifier))
+        (identifier))
+      (arguments
+        (infix_application
+          (identifier)
+          (identifier))
+        (infix_application
+          (identifier)
+          (type_arguments
+            (identifier)
+            (identifier)))))))
+
+==================
+Module with body
+==================
+
+module Option with
+  fun get(x) = x
+
+---
+
+(source_file
+  (module_definition
+    (infix_application
+      (identifier)
+      (block
+        (fun_definition
+          (application
+            (identifier)
+            (arguments
+              (identifier)))
+          (identifier))))))
+
+==================
+Declarations under a shared modifier
+==================
+
+data
+  class
+    Lit(value: Int)
+    Var(name: Str)
+
+---
+
+(source_file
+  (modified_expression
+    (modifier)
+    (block
+      (class_definition
+        (block
+          (application
+            (identifier)
+            (arguments
+              (infix_application
+                (identifier)
+                (identifier))))
+          (application
+            (identifier)
+            (arguments
+              (infix_application
+                (identifier)
+                (identifier)))))))))
+
+==================
+Import and open
+==================
+
+import "./Option.mls"
+open Option
+
+---
+
+(source_file
+  (import_statement
+    (string_literal))
+  (open_statement
+    (identifier)))
+
+==================
+Type and pattern aliases
+==================
+
+type Option[A] = Some[A] | None
+pattern Digit = '0' | '1'
+
+---
+
+(source_file
+  (type_definition
+    (type_arguments
+      (identifier)
+      (identifier))
+    (infix_application
+      (type_arguments
+        (identifier)
+        (identifier))
+      (identifier)))
+  (pattern_definition
+    (identifier)
+    (infix_application
+      (identifier)
+      (identifier))))

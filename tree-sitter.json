@@ -10,7 +10,10 @@
         "mls"
       ],
       "injection-regex": "^mlscript$",
-      "class-name": "TreeSitterMlscript"
+      "class-name": "TreeSitterMlscript",
+      "highlights": [
+        "queries/highlights.scm"
+      ]
     }
   ],
   "metadata": {

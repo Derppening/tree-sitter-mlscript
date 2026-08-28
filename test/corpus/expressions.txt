@@ -1,0 +1,165 @@
+==================
+Operator precedence
+==================
+
+a + b * c
+
+---
+
+(source_file
+  (infix_application
+    (identifier)
+    (operator)
+    (infix_application
+      (identifier)
+      (operator)
+      (identifier))))
+
+==================
+Selection and application
+==================
+
+foo.bar.baz(1, 2)
+
+---
+
+(source_file
+  (application
+    (selection
+      (selection
+        (identifier)
+        (identifier))
+      (identifier))
+    (arguments
+      (integer_literal)
+      (integer_literal))))
+
+==================
+Subscript is not a selection
+==================
+
+args.[idx]
+
+---
+
+(source_file
+  (infix_application
+    (identifier)
+    (operator)
+    (tuple
+      (identifier))))
+
+==================
+Lambda
+==================
+
+xs.map(x => x + 1)
+
+---
+
+(source_file
+  (application
+    (selection
+      (identifier)
+      (identifier))
+    (arguments
+      (lambda
+        (identifier)
+        (infix_application
+          (identifier)
+          (operator)
+          (integer_literal))))))
+
+==================
+If with pattern branches
+==================
+
+if x is
+  Some(v) then v
+  None then 0
+
+---
+
+(source_file
+  (if_expression
+    (infix_application
+      (identifier)
+      (block
+        (infix_application
+          (application
+            (identifier)
+            (arguments
+              (identifier)))
+          (identifier))
+        (infix_application
+          (identifier)
+          (integer_literal))))))
+
+==================
+Operator split branches
+==================
+
+if c
+  === "(" then 0
+  === ")" then 1
+
+---
+
+(source_file
+  (if_expression
+    (juxtaposed_block
+      (identifier)
+      (block
+        (split_branch
+          (operator)
+          (infix_application
+            (string_literal)
+            (integer_literal)))
+        (split_branch
+          (operator)
+          (infix_application
+            (string_literal)
+            (integer_literal)))))))
+
+==================
+Dangling operator continues the line
+==================
+
+val x =
+  "a" + b +
+  c
+
+---
+
+(source_file
+  (val_definition
+    (identifier)
+    (block
+      (infix_application
+        (string_literal)
+        (operator)
+        (infix_application
+          (identifier)
+          (operator)
+          (identifier))))))
+
+==================
+Literals
+==================
+
+[0, 0xFF, 0b1010, 0o17, 1_000, 1.5e-3, "s", true, null, undefined]
+
+---
+
+(source_file
+  (tuple
+    (integer_literal)
+    (integer_literal)
+    (integer_literal)
+    (integer_literal)
+    (integer_literal)
+    (decimal_literal)
+    (string_literal)
+    (boolean_literal)
+    (unit_literal)
+    (unit_literal)))
