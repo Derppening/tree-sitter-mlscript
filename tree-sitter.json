@@ -1,0 +1,42 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "mlscript",
+      "camelcase": "MLscript",
+      "title": "MLscript",
+      "scope": "source.mlscript",
+      "file-types": [
+        "mls"
+      ],
+      "injection-regex": "^mlscript$",
+      "class-name": "TreeSitterMlscript"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "Mlscript grammar for tree-sitter",
+    "authors": [
+      {
+        "name": "David Mak",
+        "email": "chmakac@connect.ust.hk",
+        "url": ""
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/Derppening/tree-sitter-mlscript",
+      "funding": ""
+    }
+  },
+  "bindings": {
+    "c": false,
+    "go": false,
+    "java": true,
+    "node": true,
+    "python": false,
+    "rust": true,
+    "swift": false,
+    "zig": false
+  }
+}
