@@ -51,23 +51,27 @@ dynamic access, type-argument lists, annotations, puns, escaped `id"..."` names,
 quasiquotes, comments, and the diff-test scaffolding (`:flags` and `//│`
 output lines) that fills the compiler's test files.
 
-Measured with `script/parse-corpus.sh`:
+Measured with `script/parse-rate.mjs` (see `docs/hkmc2-parse-rate.md`):
 
 | Corpus | Files | Parse without errors |
 | --- | --- | --- |
-| `mlscript-compile/**` (real source) | 101 | 101 (100.0%) |
-| `shared/src/test/mlscript/**` (diff tests, unmodified) | 731 | 720 (98.5%) |
+| `mlscript-compile/**` (library and app sources) | 115 | 115 (100.0%) |
+| `mlscript/**` (diff tests, unmodified) | 952 | 941 (98.8%) |
+| **Total** | **1067** | **1056 (99.0%)** |
 
-Ten of the eleven remaining diff-test failures sit directly under an
-expect-parse-error marker (`:pe`, `:e`, `:fixme`) — they are the compiler's own
-tests for syntax it rejects too. The eleventh is the gap listed below.
+Nine of the eleven remaining failures sit directly under an expect-parse-error
+marker (`:pe`) or a block whose output reports a parse error. They are the
+compiler's own tests for syntax it rejects too. The other two are error
+recovery spilling out of such a block into the next one.
 
 ### Not yet supported
 
-* An `=` on the line after its binding head, as in `let x` / `= 1`. The
-  reference accepts this as a newline-operator continuation. Allowing a newline
-  there makes a binding head greedy across statement boundaries and costs far
-  more than it buys -- it took the diff-test corpus down twelve points.
+* An `=` on the line after its binding head, as in `let x` / `= 1`. This
+  parses without errors, but as a `let_binding` with no body followed by a
+  sibling `split_branch` for `= 1`, not as one binding. The reference accepts
+  it as a newline-operator continuation. Letting a binding head reach across
+  the newline makes it greedy across statement boundaries and costs far more
+  than it buys -- it took the diff-test corpus down twelve points.
 * A bare `lhs = rhs` on the right of an operator, as in `... then foo = 0`.
   Bindings introduced by `fun` / `val` / `let` / `set` do work there; `Def` does
   not, because it starts with an expression and putting it on that path
@@ -119,9 +123,11 @@ tests for syntax it rejects too. The eleventh is the gap listed below.
   token rather than a `::` literal, because a literal would win the lexer's
   tie-break and stop `1 :: 2 :: Nil` from parsing. A projection is therefore also
   accepted after any other `:`-led operator.
-* `new C(1) with <block>` attaches the `with` as an ordinary infix application,
-  the same shape as `class C with <block>`; only the bare `new with <block>`
-  uses `new_expression`'s own body field.
+* `new C with <block>` and `new with <block>` are a `new_expression` with a
+  `body` field, but `new C(1) with <block>` is an ordinary infix `with` whose
+  left operand is `(new C)(1)`. This follows the reference parser, which also
+  reads `new C(1)` as `App(LexicalNew(C), (1))` and only folds the infix `with`
+  into the same `ProperNew` in `Tree.desugared`.
 
 ## Development
 
